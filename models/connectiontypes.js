@@ -1,0 +1,12 @@
+// https://docs.mongodb.com/manual/core/2dsphere/
+
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const connectionTypesSchema = new Schema({
+  FormalName: String,
+  Title: String,
+});
+
+module.exports = mongoose.model("ConnectionTypes", connectionTypesSchema);
