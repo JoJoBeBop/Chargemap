@@ -1,5 +1,5 @@
 'use strict';
-const connectionsModel = require('../models/connections');
+const connectionsModel = require('../models/connection');
 
 const connections_list_get = async (req, res) => {
   try {

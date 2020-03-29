@@ -13,7 +13,7 @@ const currenttypesRoute = require("./routes/currenttypesRoute");
 const connectiontypesRoute = require("./routes/connectiontypesRoute");
 const levelsRoute = require("./routes/levelsRoute");
 const authRoute = require("./routes/authRoute");
-const userRoute = require("./routes/userRoute");
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
