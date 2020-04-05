@@ -14,18 +14,15 @@ const connectiontypesRoute = require("./routes/connectiontypesRoute");
 const levelsRoute = require("./routes/levelsRoute");
 const authRoute = require("./routes/authRoute");
 
-
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/auth', authRoute);
-app.use('/user',userRoute);
+
 app.use('/connections',connectionsRoute);
 app.use('/stations',stationRoute);
 app.use('/routes',connectiontypesRoute);
-app.use('/currents',currenttypesRoute);
 app.use('/levels', levelsRoute);
-
 
 
 app.use('/station', stationRoute);

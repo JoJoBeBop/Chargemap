@@ -1,13 +1,17 @@
-'use strict';
-// stationRoute
-const express = require('express');
+"use strict";
+const express = require("express");
 const router = express.Router();
-const stationController = require('../controllers/stationController');
+const levelsController = require("../controllers/levelsController");
 
-router.get('/', stationController.station_list_get);
 
-router.get('/:id', stationController.station_get);
+router.get("/", levelsController.levels_list_get);
 
-router.post('/', stationController.station_post);
+router.get("/:id", levelsController.levels_get);
+
+router.post("/", levelsController.levels_post);
+
+router.put("/", levelsController.levels_list_get);
+
+router.delete("/", levelsController.levels_list_get);
 
 module.exports = router;

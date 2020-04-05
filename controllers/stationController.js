@@ -30,12 +30,12 @@ const station_post = async (req, res) => {
   try {
     const response = await stationModel.create(req.params);
     res.send(response);
-  } catch (error) {
-    console.error("Station post", error);
+  }
+  catch (error) {
+    console.error("station_put", error);
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const station_put = async (req, res) => {
   try {
@@ -44,22 +44,24 @@ const station_put = async (req, res) => {
       req.params
     );
     res.send(response);
-  } catch (error) {
-    console.error("Station put", error);
+  }
+  catch (error) {
+    console.error("station_put", error);
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const station_delete = async (req, res) => {
   try {
     const response = await stationModel.findByIdAndDelete(req.params.id);
     res.send(response);
-  } catch (error) {
-    console.error("Station delete", error);
+  }
+  catch (error) {
+    console.error("station_delete", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
