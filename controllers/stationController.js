@@ -3,24 +3,78 @@ const stationModel = require('../models/station');
 
 //res.send('With this endpoint you can get stations');
 const station_list_get = async (req, res) => {
+
   try {
-    const station = await stationModel.find().populate('Connection');
-    res.json(station);
+    let stations = await stationModel.find( null, null, {limit: 10}).populate({
+      path: "Connections",
+      populate: [
+        {path: "ConnectionTypeID"},
+        {path: "LevelID"},
+        {path: "CurrentTypeID"}
+      ]
+    });
+    if (req.query.limit != null) {stations = await stationModel
+        .find(null, null, {
+          limit: parseInt(req.query.limit)
+        }).populate({
+          path: "Connections",
+          populate: [
+            {path: "ConnectionTypeID"},
+            {path: "LevelID"},
+            {path: "CurrentTypeID"}
+          ]
+        });
+    }
+    else if (req.query.topRight != null && req.query.bottomLeft != null) {
+      const stationsArea = {
+        type: "Polygon",
+        coordinates: [
+          [
+            [JSON.parse(req.query.topRight).lng, JSON.parse(req.query.topRight).lat],
+            [JSON.parse(req.query.bottomLeft).lng, JSON.parse(req.query.topRight).lat],
+            [JSON.parse(req.query.bottomLeft).lng, JSON.parse(req.query.bottomLeft).lat],
+            [JSON.parse(req.query.topRight).lng, JSON.parse(req.query.bottomLeft).lat],
+            [JSON.parse(req.query.topRight).lng, JSON.parse(req.query.topRight).lat]
+          ]
+        ]
+      };
+      stations = await stationModel
+        .find(null, null, {limit: 10})
+        .populate({
+          path: "Connections",
+          populate: [
+            {path: "ConnectionTypeID"},
+            {path: "LevelID"},
+            {path: "CurrentTypeID"}
+          ]
+        })
+        .where("Location")
+        .within(stationsArea);
+    }
+    res.json(stations);
   }
   catch (error) {
-    console.error(error, "Get all stations");
+    console.error("station_list_get", error);
     res.status(500).json({message: error.message});
   }
 };
 
+
 //res.send('With this endpoint you can get one station');
 const station_get = async (req, res) => {
   try {
-    const station = await stationModel.findById(req.params.id)
-    res.json(station);
+    const oneStation = await stationModel.findById(req.params.id).populate({
+      path: "Connections",
+      populate: [
+        {path: "ConnectionTypeID"},
+        {path: "LevelID"},
+        {path: "CurrentTypeID"}
+      ]
+    });
+    res.json(oneStation);
   }
   catch (error) {
-    console.error("Station get one ", error);
+    console.error("station_get", error);
     res.status(500).json({message: error.message});
   }
 };
@@ -32,8 +86,8 @@ const station_post = async (req, res) => {
     res.send(response);
   }
   catch (error) {
-    console.error("station_put", error);
-    res.status(500).json({ message: error.message });
+    console.error("station_post", error);
+    res.status(500).json({message: error.message});
   }
 };
 
@@ -47,7 +101,7 @@ const station_put = async (req, res) => {
   }
   catch (error) {
     console.error("station_put", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 };
 
@@ -56,13 +110,12 @@ const station_delete = async (req, res) => {
     const response = await stationModel.findByIdAndDelete(req.params.id);
     res.send(response);
   }
+
   catch (error) {
     console.error("station_delete", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({message: error.message});
   }
 };
-
-
 
 
 module.exports = {
@@ -70,6 +123,5 @@ module.exports = {
   station_get,
   station_post,
   station_put,
-  station_delete,
-
+  station_delete
 };

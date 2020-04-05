@@ -18,14 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/auth', authRoute);
-
 app.use('/connections',connectionsRoute);
 app.use('/stations',stationRoute);
 app.use('/routes',connectiontypesRoute);
 app.use('/levels', levelsRoute);
 
-
-app.use('/station', stationRoute);
 
 db.on('connected', () => {
   app.listen(3000);

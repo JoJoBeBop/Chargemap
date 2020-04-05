@@ -1,17 +1,17 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const levelsController = require("../controllers/levelsController");
+const stationController = require("../controllers/stationController");
 
 
-router.get("/", levelsController.levels_list_get);
+router.get("/", stationController.station_list_get);
 
-router.get("/:id", levelsController.levels_get);
+router.get("/:id", stationController.station_get);
 
-router.post("/", levelsController.levels_post);
+router.post("/", stationController.station_post);
 
-router.put("/", levelsController.levels_list_get);
+router.put("/", stationController.station_list_get);
 
-router.delete("/", levelsController.levels_list_get);
+router.delete("/", stationController.station_list_get);
 
 module.exports = router;
