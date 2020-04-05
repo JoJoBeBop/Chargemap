@@ -4,6 +4,7 @@ const currenttypeModel = require('../models/currenttypes');
 const currentType_list_get = async (req, res) => {
   try {
     const currentTypes = await currenttypeModel.find();
+    console.log("kakak");
     res.json(currentTypes);
   }
   catch (error) {
@@ -15,6 +16,7 @@ const currentType_list_get = async (req, res) => {
 const currentType_get = async (req, res) => {
   try {
     const currentType = await currenttypeModel.findById(req.params.id);
+    console.log(currentType);
     res.json(currentType);
   }
   catch (error) {

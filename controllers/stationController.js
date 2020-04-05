@@ -71,6 +71,7 @@ const station_get = async (req, res) => {
         {path: "CurrentTypeID"}
       ]
     });
+    console.log(oneStation);
     res.json(oneStation);
   }
   catch (error) {

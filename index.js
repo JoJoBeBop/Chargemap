@@ -31,12 +31,8 @@ app.use("/graphql", (req, res) => {
   graphqlHTTP({
     schema: MyGraphQLSchema,
     graphiql: true,
-    /*context: { req, res, checkAuth }*/
   })(req, res);
 });
-
-
-
 
 db.on('connected', () => {
   app.listen(3000);

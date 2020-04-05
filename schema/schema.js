@@ -128,6 +128,28 @@ const stationType = new GraphQLObjectType({
   })
 });
 
+const locationInputType = new GraphQLInputObjectType({
+  name: "locationInput",
+  description: "Location of input",
+  fields: () => ({
+    type: { type: GraphQLString },
+    coordinates: { type: new GraphQLList(GraphQLFloat) }
+  })
+});
+
+const connectionInputType = new GraphQLInputObjectType({
+  name: "connectionInputType",
+  description: "Type of connection Input",
+  fields: () => ({
+    ConnectionTypeID: { type: GraphQLString },
+    LevelID: { type: GraphQLString },
+    CurrentTypeID: { type: GraphQLString },
+    Quantity: { type: GraphQLInt }
+  })
+});
+
+
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   description: "Main query",
@@ -151,11 +173,13 @@ const RootQuery = new GraphQLObjectType({
       args: {
         id: {type: new GraphQLNonNull(GraphQLString)}
       },
-      resolve : async (parent, args) => {
+      resolve: async (parent, args) => {
         try {
+          console.log(args);
           return await stationModel.findById(args.id)
         }
         catch (error) {
+          console.log(error);
           return new Error(error.message)
         }
       }
@@ -164,7 +188,7 @@ const RootQuery = new GraphQLObjectType({
     connectionTypes: {
       type: new GraphQLList(connectiontypeType),
       description: "Get all connection types",
-      resolve : async (parent, args) => {
+      resolve: async (parent, args) => {
         try {
           return await connectionTypeModel.find()
         }
@@ -199,17 +223,80 @@ const RootQuery = new GraphQLObjectType({
         }
       },
     }
-
-
   }
 });
 
-module.exports = new GraphQLSchema({
-  query: RootQuery
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  description: "Mutations y'all",
+  fields: {
+    addStation: {
+      type: stationType,
+      description: "Add a station",
+      args: {
+        Location: {type: new GraphQLList(locationInputType)},
+        Connections: {type: new GraphQLNonNull(new GraphQLList(connectionInputType))},
+        Title: {type: new GraphQLNonNull(GraphQLString)},
+        AddressLine1: {type: new GraphQLNonNull(GraphQLString)},
+        Town: {type: new GraphQLNonNull(GraphQLString)},
+        StateOrProvince: {type: new GraphQLNonNull(GraphQLString)},
+        Postcode: {type: new GraphQLNonNull(GraphQLString)},
+      },
+      resolve: async (parent, args) => {
+        try {
+          const addNewStation = new stationModel(args);
+          return await addNewStation.save();
+        }
+        catch (error) {
+          return new Error(error.message);
+        }
+      },
+    },
+
+    deleteStation: {
+      type: stationType,
+      description: "Delete a station",
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+      },
+      resolve: async (parent, args) => {
+        try {
+          return await stationModel.findByIdAndDelete(args.id);
+        }
+        catch (error) {
+          return new Error(error.message);
+        }
+      },
+    },
+
+    modifyStation: {
+      type: stationType,
+      description: "Modify a station",
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        Location: {type: new GraphQLList(locationInputType)},
+        Connections: {type: new GraphQLList(connectionInputType)},
+        Title: {type: new GraphQLNonNull(GraphQLString)},
+        AddressLine1: {type: new GraphQLNonNull(GraphQLString)},
+        Town: {type: new GraphQLNonNull(GraphQLString)},
+        StateOrProvince: {type: new GraphQLNonNull(GraphQLString)},
+        Postcode: {type: new GraphQLNonNull(GraphQLString)},
+      },
+      resolve: async (parent, args) => {
+        try {
+          return await stationModel.findByIdAndUpdate(args.id, args, {
+            new: true,
+          });
+        }
+        catch (error) {
+          return new Error(error.message);
+        }
+      },
+    },
+  },
 });
 
-
-
-
-
-
+module.exports = new GraphQLSchema({
+  query: RootQuery,
+  mutation: Mutation,
+});
