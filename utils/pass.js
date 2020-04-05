@@ -1,3 +1,4 @@
+/*
 'use strict';
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
@@ -25,14 +26,13 @@ passport.use(new Strategy(
     }
   }));
 
-// TODO: JWT strategy for handling bearer token
+
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: 'asd123',
   },
   (jwtPayload, done) => {
     console.log('payload', jwtPayload);
-    //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
     const user = userModel.getUser(jwtPayload.id);
     console.log('pl user', user);
     if (user) {
@@ -44,3 +44,4 @@ passport.use(new JWTStrategy({
 ));
 
 module.exports = passport;
+*/
