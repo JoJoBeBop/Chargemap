@@ -36,17 +36,21 @@ passport.use(new Strategy(
 // TODO: JWT strategy for handling bearer token
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'asd123',
+    secretOrKey: "dasdas",
   },
   async (jwtPayload, done) => {
-    console.log('payload', jwtPayload);
-    //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
     try {
-      const user = await userModel.findById(jwtPayload._id,
-        '-password -__v');
-      console.log('pl user', user);
-      if (user !== null) {
-        return done(null, user);
+      const user = await userModel.findById(jwtPayload._id);
+      console.log("user: ", user);
+      if (user !== null || undefined) {
+        const strippedUser = {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        }
+        console.log('str user', strippedUser);
+        return done(null, strippedUser);
+
       } else {
         return done(null, false);
       }
