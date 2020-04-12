@@ -148,6 +148,25 @@ const connectionInputType = new GraphQLInputObjectType({
   })
 });
 
+const LatLng = new GraphQLInputObjectType({
+  name: "LatLng",
+  description: "LatLng",
+  fields: () => ({
+    lat: {type: GraphQLFloat},
+    lng: {type: GraphQLFloat},
+  })
+});
+
+
+const Bounds = new GraphQLInputObjectType({
+  name: "Bounds",
+  description: "opposite corners of recatngular are on map",
+  fields: () => ({
+    _southWest: {type: LatLng},
+    _southEast: {type: LatLng},
+  })
+});
+
 
 
 const RootQuery = new GraphQLObjectType({
@@ -157,6 +176,11 @@ const RootQuery = new GraphQLObjectType({
     stations: {
       type: new GraphQLNonNull(GraphQLList(stationType)),
       description: "Get all stations",
+      args: {
+        bounds: {type: Bounds},
+        limit: {type: GraphQLInt, defaultValue: 10},
+        start: {type: GraphQLInt}
+      },
       resolve: async (parent, args) => {
         try {
           return await stationModel.find();
