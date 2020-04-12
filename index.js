@@ -32,34 +32,43 @@ const options = {
   cert: sslcert
 };
 
-
+app.enable('trust proxy');
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/auth', authRoute);
-app.use('/connections',connectionsRoute);
-app.use('/stations',stationRoute);
-app.use('/routes',connectiontypesRoute);
+app.use('/connections', connectionsRoute);
+app.use('/stations', stationRoute);
+app.use('/routes', connectiontypesRoute);
 app.use('/levels', levelsRoute);
 
+
+
+const checkAuth = (req, res) => {
+  passport.authenticate('jwt', {session: false}, function (err, user, info) {
+    if (err || !user) {
+      throw new Error('Not authenticated');
+    }
+  })(req, res);
+};
+
 app.use("/graphql", (req, res) => {
-
-
   graphqlHTTP({
     schema: MyGraphQLSchema,
     graphiql: true,
+    context: { req, res, checkAuth },
   })(req, res);
 });
 
-db.on('connected', () => {
 
+db.on('connected', () => {
   if (process.env.NODE_ENV === 'development') {
 
     console.log("dev running");
     https.createServer(options, app).listen(8000);
     http.createServer((req, res) => {
-      res.writeHead(301, { 'Location': `https://localhost:${httpsport}${req.url}` });
+      res.writeHead(301, {'Location': `https://localhost:${httpsport}${req.url}`});
       res.end();
     }).listen(httpport);
 
